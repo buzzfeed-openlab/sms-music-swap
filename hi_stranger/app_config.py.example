@@ -1,0 +1,17 @@
+DB_USER = ''
+DB_PW = ''
+DB_HOST = 'localhost'
+DB_NAME = 'hi_stranger'
+
+ADMIN_USER = 'admin'
+ADMIN_PASS = 'something-secret'
+
+SECRET_KEY = 'another-secret-thing'
+
+PORT = 8000
+
+# find this at https://www.twilio.com/console
+TWILIO_ACCOUNT_SID = ''
+TWILIO_AUTH_TOKEN = ''
+# this is the phone number you want to text from
+TWILIO_PHONE_NO = '' # '+12345678910'
