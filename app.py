@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql.expression import func
 from functools import wraps
 from hi_stranger import create_app
-from hi_stranger.app_config import ADMIN_USER, ADMIN_PASS, PORT, SECRET_KEY, \
+from hi_stranger.app_config import ADMIN_USER, ADMIN_PASS, SECRET_KEY, \
                                     TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NO
 # TODO: allow these config variables to be set in the environment
 from hi_stranger.models import Answer
@@ -12,16 +12,16 @@ import twilio.twiml
 from twilio.rest import TwilioRestClient
 
 
-app = create_app()
+application = create_app()
 
-@app.route("/")
+@application.route("/")
 def index():
     # TODO: grab some recordings to show
     return render_template('index.html')
 
 
 
-@app.route("/respond", methods=['GET', 'POST'])
+@application.route("/respond", methods=['GET', 'POST'])
 def respond():
     """Respond to incoming texts"""
 
@@ -112,7 +112,7 @@ def requires_auth(f):
     return decorated
 
 
-@app.route('/review')
+@application.route('/review')
 @requires_auth
 def review():
     review_queue = Answer.query.filter_by(is_approved=None).all()
@@ -120,7 +120,7 @@ def review():
     disapproved = Answer.query.filter_by(is_approved=False).all()
     return render_template('review.html', review_queue = review_queue, approved=approved, disapproved=disapproved)
 
-@app.route('/approve/<ans_id>')
+@application.route('/approve/<ans_id>')
 @requires_auth
 def approve(ans_id):
     ans = Answer.query.get(ans_id)
@@ -128,7 +128,7 @@ def approve(ans_id):
     db.session.commit()
     return redirect('/review')
 
-@app.route('/disapprove/<ans_id>')
+@application.route('/disapprove/<ans_id>')
 @requires_auth
 def disapprove(ans_id):
     ans = Answer.query.get(ans_id)
@@ -137,9 +137,16 @@ def disapprove(ans_id):
     return redirect('/review')
 
 
+@application.route('/initialize')
+@requires_auth
+def initialize():
+    # TODO: only do this if tables don't exist?
+    db.create_all()
+    return redirect('/')
+
+
 
 if __name__ == "__main__":
-    app.secret_key = SECRET_KEY
-    app.config['SESSION_TYPE'] = 'filesystem'
 
-    app.run(debug=True, port=PORT)
+    application.secret_key = SECRET_KEY
+    application.run(debug=True)
