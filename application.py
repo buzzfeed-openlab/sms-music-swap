@@ -31,8 +31,10 @@ def respond():
 
     resp = twilio.twiml.Response()
 
+    incoming_msg = request.values.get('Body', '')
+
     # this clears all cookies
-    if(request.values.get('Body', None)=='clear'):
+    if(incoming_msg=='clear'):
         session['seen_prompt'] = False
         session['gave_rec'] = False
         session['extra_msg'] = False
@@ -43,10 +45,10 @@ def respond():
     # if exchange has been completed
     if session.get('extra_msg',False):
         session['extra_msg'] = False
-        if request.values.get('Body', '').lower().startswith('y'):
+        if incoming_msg.lower().startswith('y'):
             session['seen_prompt'] = False
             session['gave_rec'] = False
-        elif request.values.get('Body', '').lower().startswith('n'):
+        elif incoming_msg.lower().startswith('n'):
             # TODO: ask for feedback?
             resp.sms('ok, later!')
             return str(resp)
@@ -54,14 +56,16 @@ def respond():
 
 
     if not session.get('seen_prompt',False):
-        # resp.sms("give a music rec, get a music rec! \
-        #     if you could recommend one album to a stranger, what would it be?")
-        resp.sms("give a music rec, get a music rec! \nreply & tell me about an album you wish more people knew about.")
+        # custom greeting for creative mornings
+        if 'serendipity' in incoming_msg:
+            resp.sms("hey there! want to exchange music recs with random people in the Creative Mornings community? reply & tell me about a song you wish more people knew about.")
+        else:
+            resp.sms("give a music rec, get a music rec! \nreply & tell me about a song you wish more people knew about.")
         session['seen_prompt'] = True
 
     elif not session.get('gave_rec',False):
         # saving rec here
-        new_rec = Answer(request.values.get('SmsSid'), request.values.get('From'), request.values.get('Body'))
+        new_rec = Answer(request.values.get('SmsSid'), request.values.get('From'), incoming_msg)
         db.session.add(new_rec)
         db.session.commit()
 
