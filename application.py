@@ -74,18 +74,17 @@ def respond():
             db.session.add(random_rec)
             db.session.commit()
             resp.sms("thanks! I'll pass it on. here's a rec from a stranger: \n%s" %random_rec.answer_text)
+
+            # alerting rec-giver when rec has been seen for the first time
+            if random_rec.from_number and random_rec.view_count==1:
+                client = TwilioRestClient(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+
+                msg = "your rec (%s) was just delivered to a stranger" %random_rec.answer_text
+                message = client.messages.create(to=random_rec.from_number, from_=TWILIO_PHONE_NO,
+                                                             body=msg)
         else:
             # TODO: deal with this
             resp.sms("thanks! unfortunately I don't have any recs to show you b/c I haven't collected enough")
-
-        # alerting rec-giver when rec has been seen for the first time
-        if random_rec.from_number and random_rec.view_count==1:
-            client = TwilioRestClient(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
-
-            msg = "your rec (%s) was just delivered to a stranger" %random_rec.answer_text
-            message = client.messages.create(to=random_rec.from_number, from_=TWILIO_PHONE_NO,
-                                                 body=msg)
-
 
         session['gave_rec'] = True
     else:
