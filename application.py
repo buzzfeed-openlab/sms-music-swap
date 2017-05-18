@@ -57,7 +57,7 @@ def respond():
 
     if not session.get('seen_prompt',False):
         # custom greeting for creative mornings
-        if 'serendipity' in incoming_msg:
+        if 'serendipity' in incoming_msg.lower():
             resp.sms("hey there! want to exchange music recs with random people in the Creative Mornings community? reply & tell me about a song you wish more people knew about.")
         else:
             resp.sms("give a music rec, get a music rec! \nreply & tell me about a song you wish more people knew about.")
@@ -65,9 +65,10 @@ def respond():
 
     elif not session.get('gave_rec',False):
         # saving rec here
-        new_rec = Answer(request.values.get('SmsSid'), request.values.get('From'), incoming_msg)
-        db.session.add(new_rec)
-        db.session.commit()
+        if incoming_msg: # only if there is a msg
+            new_rec = Answer(request.values.get('SmsSid'), request.values.get('From'), incoming_msg)
+            db.session.add(new_rec)
+            db.session.commit()
 
         # grabbing a rec from a stranger
         # TODO: ensure that this is not a rec from yourself
@@ -98,6 +99,12 @@ def respond():
 
 
     return str(resp)
+
+@application.route("/rollback", methods=['GET', 'POST'])
+def rollback():
+    # TODO: figure out what's going on???
+    db.session.rollback()
+    return redirect('/respond')
 
 
 def check_auth(username, password):
