@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-from hi_stranger import create_app
+from sms_swap import create_app
 
 
 app = create_app()

@@ -1,6 +1,6 @@
 import datetime
 
-from hi_stranger.database import db
+from sms_swap.database import db
 
 
 class Answer(db.Model):

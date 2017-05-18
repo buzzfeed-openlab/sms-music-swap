@@ -2,12 +2,12 @@ from flask import redirect, request, render_template, Response, session
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql.expression import func
 from functools import wraps
-from hi_stranger import create_app
-from hi_stranger.app_config import ADMIN_USER, ADMIN_PASS, SECRET_KEY, \
+from sms_swap import create_app
+from sms_swap.app_config import ADMIN_USER, ADMIN_PASS, SECRET_KEY, \
                                     TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NO
 # TODO: allow these config variables to be set in the environment
-from hi_stranger.models import Answer
-from hi_stranger.database import db
+from sms_swap.models import Answer
+from sms_swap.database import db
 import twilio.twiml
 from twilio.rest import TwilioRestClient
 
@@ -35,25 +35,31 @@ def respond():
     if(request.values.get('Body', None)=='clear'):
         session['seen_prompt'] = False
         session['gave_rec'] = False
-        resp.sms("ok let's start over")
+        session['extra_msg'] = False
+        resp.sms("erasing my memory of our conversation")
         return str(resp)
 
 
-    # initializing cookies
-    # TODO: clean this up
-    seen_prompt = session.get('seen_prompt',False)
-    gave_rec = session.get('gave_rec',False)
+    # if exchange has been completed
+    if session.get('extra_msg',False):
+        session['extra_msg'] = False
+        if request.values.get('Body', '').lower().startswith('y'):
+            session['seen_prompt'] = False
+            session['gave_rec'] = False
+        elif request.values.get('Body', '').lower().startswith('n'):
+            # TODO: ask for feedback?
+            resp.sms('ok, later!')
+            return str(resp)
 
 
 
-
-    if not seen_prompt:
+    if not session.get('seen_prompt',False):
         # resp.sms("give a music rec, get a music rec! \
         #     if you could recommend one album to a stranger, what would it be?")
         resp.sms("give a music rec, get a music rec! \nreply & tell me about an album you wish more people knew about.")
         session['seen_prompt'] = True
 
-    elif not gave_rec:
+    elif not session.get('gave_rec',False):
         # saving rec here
         new_rec = Answer(request.values.get('SmsSid'), request.values.get('From'), request.values.get('Body'))
         db.session.add(new_rec)
@@ -67,10 +73,10 @@ def respond():
             random_rec.view_count = random_rec.view_count+1
             db.session.add(random_rec)
             db.session.commit()
-            resp.sms("thanks! I'll pass it on. here's a rec from a stranger: %s" %random_rec.answer_text)
+            resp.sms("thanks! I'll pass it on. here's a rec from a stranger: \n%s" %random_rec.answer_text)
         else:
             # TODO: deal with this
-            resp.sms("thanks! unfortanely I don't have any recs to show you b/c I haven't collected enough")
+            resp.sms("thanks! unfortunately I don't have any recs to show you b/c I haven't collected enough")
 
         # alerting rec-giver when rec has been seen for the first time
         if random_rec.from_number and random_rec.view_count==1:
@@ -83,8 +89,9 @@ def respond():
 
         session['gave_rec'] = True
     else:
-        # TODO: handle additional messages
-        resp.sms("sry I am a dumb bot & idk how to continue this conversation. I should have a help menu...")
+        # TODO: a more elegant way of handling additional messages?
+        session['extra_msg'] = True
+        resp.sms("do you want to start over & exchange another album rec? \n(y/n)")
 
 
     return str(resp)
