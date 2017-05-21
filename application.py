@@ -58,7 +58,7 @@ def respond():
     if not session.get('seen_prompt',False):
         # custom greeting for creative mornings
         if 'serendipity' in incoming_msg.lower():
-            resp.sms("hey there! want to exchange music recs with random people in the Creative Mornings community? reply & tell me about a song you wish more people knew about.")
+            resp.sms("hey there! want to exchange music recs with random people in the CreativeMornings community? reply & tell me about a song you wish more people knew about.")
         else:
             resp.sms("give a music rec, get a music rec! \nreply & tell me about a song you wish more people knew about.")
         session['seen_prompt'] = True
