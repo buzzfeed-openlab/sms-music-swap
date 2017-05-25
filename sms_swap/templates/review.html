@@ -7,17 +7,25 @@
       <h1>review queue</h1>
       <table class="table table-condensed small">
         <thead>
-          <tr><th>Answer</th><th>Number</th><th>Date</th><th></th></tr>
+          <tr><th>Answer</th><th>Meta</th><th class="col-xs-3"></th></tr>
         </thead>
         <tbody>
           {% for ans in review_queue %}
           <tr>
             <td>{{ ans.answer_text }}</td>
-            <td>{{ ans.from_number }}</td>
-            <td>{{ ans.dt }}</td>
-            <td>
-              <a class="btn btn-success btn-sm" href="/approve/{{ ans.id }}"><i class="fa fa-fw fa-check"></i></a>
-              <a class="btn btn-danger btn-sm" href="/disapprove/{{ ans.id }}"><i class="fa fa-fw fa-times"></i></a>
+            <td class="small text-muted">
+              {{ ans.from_number }}<br/>
+              {{ ans.dt.strftime('%m/%d %H:%m') }}
+            </td>
+            <td class="text-right">
+              <div class="btn-group" role="group">
+                <a class="btn btn-success btn-sm" href="/approve/{{ ans.id }}">
+                  <i class="fa fa-fw fa-check"></i>
+                </a>
+                <a class="btn btn-danger btn-sm" href="/disapprove/{{ ans.id }}">
+                  <i class="fa fa-fw fa-times"></i>
+                </a>
+              </div>
             </td>
           </tr>
           {% endfor %}
@@ -30,15 +38,17 @@
 
       <table class="table table-condensed small">
         <thead>
-          <tr><th>Answer</th><th>Number</th><th>Date</th><th></th></tr>
+          <tr><th>Answer</th><th>Meta</th><th></th></tr>
         </thead>
         <tbody>
           {% for ans in approved %}
           <tr>
             <td>{{ ans.answer_text }}</td>
-            <td>{{ ans.from_number }}</td>
-            <td>{{ ans.dt }}</td>
-            <td>
+            <td class="small text-muted">
+              {{ ans.from_number }}<br/>
+              {{ ans.dt.strftime('%m/%d %H:%m') }}
+            </td>
+            <td class="text-right">
               <a class="btn btn-default btn-sm" href="/disapprove/{{ ans.id }}"><i class="fa fa-fw fa-times"></i></a>
             </td>
           </tr>
@@ -51,15 +61,17 @@
 
       <table class="table table-condensed small">
         <thead>
-          <tr><th>Answer</th><th>Number</th><th>Date</th><th></th></tr>
+          <tr><th>Answer</th><th>Meta</th><th></th></tr>
         </thead>
         <tbody>
           {% for ans in disapproved %}
           <tr>
             <td>{{ ans.answer_text }}</td>
-            <td>{{ ans.from_number }}</td>
-            <td>{{ ans.dt }}</td>
-            <td>
+            <td class="small text-muted">
+              {{ ans.from_number }}<br/>
+              {{ ans.dt.strftime('%m/%d %H:%m') }}
+            </td>
+            <td class="text-right">
               <a class="btn btn-default btn-sm" href="/approve/{{ ans.id }}"><i class="fa fa-fw fa-check"></i></a>
             </td>
           </tr>
