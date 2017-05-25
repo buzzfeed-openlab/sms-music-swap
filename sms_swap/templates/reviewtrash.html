@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-sm-8 col-sm-offset-2">
+
+      <h2>trash</h2>
+
+      <table class="table table-condensed small">
+        <thead>
+          <tr><th>Answer</th><th>Meta</th><th></th></tr>
+        </thead>
+        <tbody>
+          {% for ans in disapproved %}
+          <tr>
+            <td>{{ ans.answer_text }}</td>
+            <td class="small text-muted">
+              {{ ans.from_number }}<br/>
+              {{ ans.dt.strftime('%m/%d %H:%m') }}
+            </td>
+            <td class="text-right">
+              <a class="btn btn-default btn-sm" href="/approve/{{ ans.id }}"><i class="fa fa-fw fa-check"></i></a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

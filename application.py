@@ -136,8 +136,14 @@ def requires_auth(f):
 def review():
     review_queue = Answer.query.filter_by(is_approved=None).all()
     approved = Answer.query.filter_by(is_approved=True).all()
+    return render_template('review.html', review_queue = review_queue, approved=approved)
+
+@application.route('/reviewtrash')
+@requires_auth
+def reviewtrash():
     disapproved = Answer.query.filter_by(is_approved=False).all()
-    return render_template('review.html', review_queue = review_queue, approved=approved, disapproved=disapproved)
+    return render_template('reviewtrash.html', disapproved=disapproved)
+
 
 @application.route('/approve/<ans_id>')
 @requires_auth

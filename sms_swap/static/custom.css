@@ -1,4 +1,8 @@
 
+.bg-info {
+  background-color: #f6f6f6;
+}
+
 .text-muted {
   color: #ccc;
 }
