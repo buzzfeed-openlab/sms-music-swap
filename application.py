@@ -3,8 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql.expression import func
 from functools import wraps
 from sms_swap import create_app
-from sms_swap.app_config import ADMIN_USER, ADMIN_PASS, SECRET_KEY, \
-                                    TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NO
+from sms_swap.config import CONFIG_VARS
 from sms_swap.models import Answer
 from sms_swap.database import db
 import twilio.twiml
@@ -23,10 +22,6 @@ def index():
 @application.route("/respond", methods=['GET', 'POST'])
 def respond():
     """Respond to incoming texts"""
-
-
-    print("\n\nrequest.values")
-    print(request.values)
 
     resp = twilio.twiml.Response()
 
@@ -79,11 +74,16 @@ def respond():
 
                 # alerting rec-giver when rec has been seen for the first time
                 if random_rec.from_number and random_rec.view_count==1:
-                    client = TwilioRestClient(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
-
+                    client = TwilioRestClient(
+                                CONFIG['TWILIO_ACCOUNT_SID'],
+                                CONFIG['TWILIO_AUTH_TOKEN']
+                            )
                     msg = "your rec (%s) was just delivered to a stranger" %random_rec.answer_text
-                    message = client.messages.create(to=random_rec.from_number, from_=TWILIO_PHONE_NO,
-                                                                 body=msg)
+                    message = client.messages.create(
+                                to=random_rec.from_number,
+                                from_=CONFIG['TWILIO_PHONE_NO'],
+                                body=msg
+                            )
         else:
             # TODO: deal with this
             resp.sms("thanks! unfortunately I don't have any recs to show you b/c I haven't collected enough")
@@ -109,7 +109,7 @@ def check_auth(username, password):
     """This function is called to check if a username /
     password combination is valid.
     """
-    return username == ADMIN_USER and password == ADMIN_PASS
+    return username == CONFIG_VARS['ADMIN_USER'] and password == CONFIG_VARS['ADMIN_PASS']
 
 def authenticate():
     """Sends a 401 response that enables basic auth"""
@@ -169,5 +169,4 @@ def initialize():
 
 if __name__ == "__main__":
 
-    application.secret_key = SECRET_KEY
-    application.run(debug=True, host='0.0.0.0')
+    application.run(host='0.0.0.0')
