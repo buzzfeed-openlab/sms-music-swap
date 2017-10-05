@@ -65,13 +65,13 @@ You will need a twilio account & number to configure the app. (INSTRUCTIONS TO C
 **Option A**  
 Copy the example secret config file
 ```bash
-cp sms_swap/app_config_secret.py.example sms_swap/app_config_secret.py
+cp sms_swap/config_vars_secret.py.example sms_swap/config_vars_secret.py
 ```
 
-Then, edit `sms_swap/app_config_secret.py`.
+Then, edit `sms_swap/config_vars_secret.py`.
 
 **Option B**  
-see `sms_swap/app_config.py` for the names of environment variables to set
+see `sms_swap/config_vars_secret.py.example` for the names of environment variables to set & descriptions of what the values should look like.
 
 **6. Run the app locally**
 ```bash

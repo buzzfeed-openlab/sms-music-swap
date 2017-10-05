@@ -4,8 +4,8 @@ import os
 # TODO: tighten this up
 
 # if app_config_secret.py exists, use that to set config variables
-if os.path.isfile(os.path.dirname(__file__)+'/app_config_secret.py'):
-    from .app_config_secret import DB_USER, DB_PW, DB_HOST, DB_NAME, \
+if os.path.isfile(os.path.dirname(__file__)+'/config_vars_secret.py'):
+    from .config_vars_secret import DB_USER, DB_PW, DB_HOST, DB_NAME, \
                                     ADMIN_USER, ADMIN_PASS, SECRET_KEY, \
                                     TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NO
 
