@@ -5,7 +5,7 @@ from sms_swap.database import db
 
 class Answer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    text_sid = db.Column(db.String(255), unique=True)
+    text_sid = db.Column(db.String(255))
     from_number = db.Column(db.String(255))
     answer_text = db.Column(db.Text)
     is_approved = db.Column(db.Boolean)

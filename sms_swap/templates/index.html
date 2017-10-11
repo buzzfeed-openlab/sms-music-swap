@@ -5,7 +5,10 @@
   <div class="row">
     <div class="col-sm-8 col-sm-offset-2">
       <h1>music swap</h1>
-      <p><a href="/review">Review responses</a></p>
+      <p><a href="{{ url_for('review') }}">Review responses</a></p>
+      <p><a href="{{ url_for('reviewtrash') }}">See deleted responses</a></p>
+      <p><a href="{{ url_for('add') }}">Manually add songs</a></p>
+      <p><a href="{{ url_for('respond') }}">Twilio endpoint</a></p>
     </div>
   </div>
 </div>

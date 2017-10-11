@@ -61,7 +61,10 @@ def respond():
             db.session.commit()
 
         # grabbing a rec from a stranger
-        random_rec = Answer.query.filter_by(is_approved=True).filter(Answer.from_number!=request.values.get('From')).order_by(func.rand()).first()
+        random_rec = Answer.query.filter_by(is_approved=True)\
+                            .filter((Answer.from_number!=request.values.get('From'))|(Answer.from_number == None))\
+                            .order_by(func.rand())\
+                            .first()
 
         if random_rec:
             resp.sms("thanks! I'll pass it on. here's a song from a stranger:\n\n%s" %random_rec.answer_text)
@@ -156,6 +159,18 @@ def disapprove(ans_id):
     db.session.commit()
     return redirect('/review')
 
+@application.route('/add', methods=['GET', 'POST'])
+@requires_auth
+def add():
+    # manually adding songs
+    if request.method == 'POST':
+
+        new_ans = Answer(None, None, request.form['song'])
+        new_ans.is_approved = True
+        db.session.add(new_ans)
+        db.session.commit()
+
+    return render_template('add.html')
 
 @application.route('/initialize')
 @requires_auth
