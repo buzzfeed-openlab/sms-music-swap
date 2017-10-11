@@ -50,7 +50,7 @@ def respond():
 
 
     if not session.get('seen_prompt',False):
-        resp.sms("give a music rec, get a music rec! \nreply & tell me about a song you wish more people knew about.")
+        resp.sms("🎵give music, get music🎵\n\nreply and tell me about any song! say, something you've had on repeat, or a hidden gem you wish more people knew about, or just the last thing you listened to.")
         session['seen_prompt'] = True
 
     elif not session.get('gave_rec',False):
@@ -61,11 +61,10 @@ def respond():
             db.session.commit()
 
         # grabbing a rec from a stranger
-        # TODO: ensure that this is not a rec from yourself
         random_rec = Answer.query.filter_by(is_approved=True).filter(Answer.from_number!=request.values.get('From')).order_by(func.rand()).first()
 
         if random_rec:
-            resp.sms("thanks! I'll pass it on. here's a rec from a stranger: \n%s" %random_rec.answer_text)
+            resp.sms("thanks! I'll pass it on. here's a song from a stranger:\n\n%s" %random_rec.answer_text)
 
             if incoming_msg: # only if there is a msg
                 random_rec.view_count = random_rec.view_count+1
@@ -86,13 +85,13 @@ def respond():
                             )
         else:
             # TODO: deal with this
-            resp.sms("thanks! unfortunately I don't have any recs to show you b/c I haven't collected enough")
+            resp.sms("thanks! unfortunately I don't have any songs to show you b/c I haven't collected enough")
 
         session['gave_rec'] = True
     else:
         # TODO: a more elegant way of handling additional messages?
         session['extra_msg'] = True
-        resp.sms("do you want to start over & exchange another album rec? \n(y/n)")
+        resp.sms("do you want to start over & exchange another song? \n(y/n)")
 
 
     return str(resp)
