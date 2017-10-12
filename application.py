@@ -77,13 +77,13 @@ def respond():
                 # alerting rec-giver when rec has been seen for the first time
                 if random_rec.from_number and random_rec.view_count==1:
                     client = TwilioRestClient(
-                                CONFIG['TWILIO_ACCOUNT_SID'],
-                                CONFIG['TWILIO_AUTH_TOKEN']
+                                CONFIG_VARS['TWILIO_ACCOUNT_SID'],
+                                CONFIG_VARS['TWILIO_AUTH_TOKEN']
                             )
                     msg = "your rec (%s) was just delivered to a stranger" %random_rec.answer_text
                     message = client.messages.create(
                                 to=random_rec.from_number,
-                                from_=CONFIG['TWILIO_PHONE_NO'],
+                                from_=CONFIG_VARS['TWILIO_PHONE_NO'],
                                 body=msg
                             )
         else:
