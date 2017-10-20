@@ -11,7 +11,7 @@ In a nutshell, the app:
 - texts notifications when responses have been seen
 - allows admins to moderate responses
 
-#### Try it out by texting 1-415-851-7927
+#### UPDATE: the music swap bot used to live at 1-415-851-7927, but unfortunately it needs to be shut down due to high usage (i.e. high costs). If you're interested in reviving it, reach out: cathyd125 at gmail
 
 ## Setup
 
